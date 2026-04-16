@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import joblib
 import pandas as pd
 import os
@@ -11,7 +11,8 @@ features = joblib.load('feature_list.pkl')
 
 @app.route('/')
 def home():
-    return "XGBoost Diagnosis API is Running!"
+    return render_template('index.html')
+    # return "XGBoost Diagnosis API is Running!"
 
 @app.route('/predict', methods=['POST'])
 def predict():

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cancer Diagnosis Predictor</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; line-height: 1.6; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; font-size: 16px; }
+        #result { margin-top: 20px; font-weight: bold; padding: 15px; border-radius: 4px; display: none; }
+    </style>
+</head>
+<body>
+    <h2>Cancer Diagnosis Predictor</h2>
+    <form id="predictForm">
+        <input type="number" id="radius_mean" step="0.01" placeholder="Radius Mean" required>
+        <input type="number" id="texture_mean" step="0.01" placeholder="Texture Mean" required>
+        <input type="number" id="perimeter_mean" step="0.01" placeholder="Perimeter Mean" required>
+        <input type="number" id="area_mean" step="0.01" placeholder="Area Mean" required>
+        <button type="submit">Predict Diagnosis</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('predictForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('result');
+            const data = {
+                radius_mean: parseFloat(document.getElementById('radius_mean').value),
+                texture_mean: parseFloat(document.getElementById('texture_mean').value),
+                perimeter_mean: parseFloat(document.getElementById('perimeter_mean').value),
+                area_mean: parseFloat(document.getElementById('area_mean').value)
+            };
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            
+            resultDiv.style.display = 'block';
+            resultDiv.style.backgroundColor = result.diagnosis === 'Malignant' ? '#f8d7da' : '#d4edda';
+            resultDiv.innerHTML = `Result: ${result.diagnosis} <br> Confidence: ${result.confidence}`;
+        };
+    </script>
+</body>
+</html>
